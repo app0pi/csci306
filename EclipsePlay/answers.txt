@@ -1,0 +1,3 @@
+1. File->Revert undoes the correcting of the indentation of the lines.
+2. It shows variables on the sidebar such as "this" (not technically a variable but still has value) and its value.
+3. There is an error message at three different locations.

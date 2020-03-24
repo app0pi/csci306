@@ -1,0 +1,160 @@
+package clueGame;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.border.Border;
+
+public class BoardCell {
+	
+	private int row;
+	private int column;
+	private char initial;
+	private boolean doorway;
+	private DoorDirection doorDirection;
+	private int pixelX;
+	private int pixelY;
+	private int cellWidth;
+	private int cellHeight;
+	
+
+	public BoardCell(int _row, int _column)	{
+		row = _row;
+		column = _column;
+		doorway = false;
+	}
+	
+	public void calculatePixelLocation(int x, int y) {	//gets called when GUI manager is started
+		cellWidth = (int) Math.floor(x/Board.getInstance().getNumColumns());
+		cellHeight = (int) Math.floor(y/Board.getInstance().getNumRows());
+		
+		pixelX = cellWidth * column;
+		pixelY = cellHeight * row;
+	}
+	
+	public void drawPlayer(Player player) {
+		
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
+	@Override
+	public String toString() {
+		return "BoardCell [row=" + row + ", column=" + column + "]";
+	}
+
+	public boolean isDoorway() {
+		return doorway;
+	}
+
+	public void setDoorway(boolean doorway) {
+		this.doorway = doorway;
+	}
+
+	public DoorDirection getDoorDirection() {
+		return doorDirection;
+	}
+
+	public void setDoorDirection(DoorDirection direction) {
+		this.doorDirection = direction;
+	}
+
+	public char getInitial() {
+		return initial;
+	}
+
+	public void setInitial(char initial) {
+		this.initial = initial;
+	}
+
+	public void draw(Graphics g) {
+		switch(this.getInitial()) {
+		//set walkways to yellow with black border
+		case 'W':
+			g.setColor(Color.yellow);
+			g.fillRect(this.pixelX, this.pixelY, this.cellWidth, this.cellHeight);
+			g.setColor(Color.black);
+			g.drawRect(this.pixelX, this.pixelY, this.cellWidth, this.cellHeight);
+			break;
+		//set certain rooms to light gray
+		case 'M':
+		case 'A':
+		case 'H':
+		case 'F':
+		case 'C':
+			g.setColor(Color.lightGray);
+			g.fillRect(this.pixelX, this.pixelY, this.cellWidth, this.cellHeight);
+			break;
+		//make the closet as dark as possible
+		case 'X':
+			g.setColor(Color.darkGray);
+			g.fillRect(this.pixelX, this.pixelY, this.cellWidth, this.cellHeight);
+			break;
+		//set the rest of the rooms to gray
+		default:
+			g.setColor(Color.gray);
+			g.fillRect(this.pixelX, this.pixelY, this.cellWidth, this.cellHeight);
+			break;
+		}
+		g.setColor(Color.blue);  //sets color for all the following labels
+		if(this.row == 6 && this.column == 1){
+			g.drawString("Food Court", this.pixelX, this.pixelY);
+		}
+		if(this.row == 2 && this.column == 7){
+			g.drawString("Hard Rock Cafe", this.pixelX, this.pixelY);
+		}
+		if(this.row == 2 && this.column == 15){
+			g.drawString("Haagen Dazs", this.pixelX, this.pixelY);
+		}
+		if(this.row == 2 && this.column == 20){
+			g.drawString("Gamestop", this.pixelX, this.pixelY);
+		}
+		if(this.row == 13 && this.column == 20){
+			g.drawString("Macy's", this.pixelX, this.pixelY);
+		}
+		if(this.row == 16 && this.column == 12){
+			g.drawString("Victoria's Secret", this.pixelX, this.pixelY);
+		}
+		if(this.row == 16 && this.column == 6){
+			g.drawString("Chick-fil-A", this.pixelX, this.pixelY);
+		}
+		if(this.row == 16 && this.column == 1){
+			g.drawString("Panda Express", this.pixelX, this.pixelY);
+		}
+		if(this.row == 10 && this.column == 6){
+			g.drawString("Cinnabon", this.pixelX, this.pixelY);
+		}
+		
+		//doors:
+		g.setColor(Color.blue); //set color for all doors
+		if(doorDirection==DoorDirection.UP) {
+			g.fillRect(this.pixelX, this.pixelY, this.cellWidth, this.cellHeight/4);
+		}
+		if(doorDirection==DoorDirection.DOWN) {
+			g.fillRect(this.pixelX, this.pixelY+this.cellHeight*3/4, this.cellWidth, this.cellHeight/4);
+		}
+		if(doorDirection==DoorDirection.LEFT) {
+			g.fillRect(this.pixelX, this.pixelY, this.cellWidth/4, this.cellHeight);
+		}
+		if(doorDirection==DoorDirection.RIGHT) {
+			g.fillRect(this.pixelX+this.cellWidth*3/4, this.pixelY, this.cellWidth/4, this.cellHeight);
+		}
+		
+		//players
+		for(Player c : Board.getInstance().getPlayers())	{
+			if(c.getRow()==this.row && c.getColumn()==this.column) {
+				g.setColor(c.getColor());
+				g.fillOval(this.pixelX,this.pixelY,20,20);
+			}
+		}
+	}
+	
+}	

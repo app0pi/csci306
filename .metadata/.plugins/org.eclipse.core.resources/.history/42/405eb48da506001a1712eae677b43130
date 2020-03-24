@@ -1,0 +1,702 @@
+//Authors: Jared Hamilton, Kenny Lieu
+
+package clueGame;
+
+import java.awt.Color;
+import java.awt.List;
+import java.awt.Point;
+import java.awt.Graphics;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+public class Board extends JPanel{
+
+	final static int CARDS_PER_PLAYER = 3;
+	
+	private int numRows = 0;
+	private int numColumns = 0;
+	public static final int MAX_BOARD_SIZE = 50;
+	private BoardCell[][] board;
+	private Map<Character, String> legend;
+	private Map<BoardCell, Set<BoardCell>> adjMatrix;
+	private Set<BoardCell> visited;
+	private Set<BoardCell> targets;
+	private Set<Card> allCards;
+	private Set<Card> cardDeck;
+	private Set<Player> players;
+	private Set<Card> cardSolution;
+	private Player playersTurn;
+	private int turnNumber = 1;
+	private ArrayList<Player> currentPlayers;
+	
+	public Player getPlayersTurn() {
+		return playersTurn;
+	}
+
+	public void setPlayersTurn(Player playersTurn) {
+		this.playersTurn = playersTurn;
+	}
+	
+	
+	public Set<Player> testPlayers;
+	
+	public Map<Character, String> roomMap;
+	
+	private Solution solution;
+
+	private String boardConfigFile;
+	private String roomConfigFile;
+	private String playerConfigFile;
+	private String weaponConfigFile;
+
+	//singleton
+	private static Board thisBoard;
+	private Board()	{super();}
+
+	public static Board getInstance()	{
+		
+		if (thisBoard == null)
+			
+			thisBoard=new Board();
+		return thisBoard;
+	}
+	
+	
+	@Override
+	public void paintComponent(Graphics g)	{
+		super.paintComponent(g);
+		
+		int cellspainted = 0;
+		for(int i=0; i<board.length; i++)	{
+			
+			for(int j=0; j<board[i].length; j++)	{
+				board[i][j].draw(g);
+				cellspainted++;
+			}
+		}
+		
+		System.out.println("cellas painted: " + cellspainted);
+	}
+	
+
+	public void initialize() throws BadConfigFormatException	{
+		infoBox("YOUR INFORMATION HERE", "TITLE BAR MESSAGE");
+		//initialize our private variables
+		targets = new HashSet<BoardCell>();		
+		adjMatrix = new HashMap<BoardCell, Set<BoardCell>>();
+		legend = new HashMap<Character, String>();
+		visited = new HashSet<BoardCell>(); 
+		allCards = new HashSet<Card>();
+		cardDeck = new HashSet<Card>();
+		players = new HashSet<Player>();
+		cardSolution = new HashSet<Card>();
+		roomMap = new HashMap<Character, String>();
+		currentPlayers = new ArrayList<Player>(players);
+		this.solution = new Solution();
+
+		//make sure rows and columns are at zero
+		try {
+			configNumSetup();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			System.out.println(e1.getMessage());
+		}
+
+		try	{
+			board = new BoardCell[numRows][numColumns];
+			FileReader layoutFile = new FileReader(boardConfigFile);
+			Scanner sc = new Scanner(layoutFile);
+
+			String line;
+			int row=0;
+
+			while(sc.hasNextLine())	{
+				line = sc.nextLine();
+				String[] lineValues = line.split(",");
+				for(int i=0; i<lineValues.length; i++)	{
+					BoardCell bc = new BoardCell(row, i);
+					bc.setInitial(lineValues[i].charAt(0));
+
+					if(lineValues[i].length() > 1)	{
+						bc.setDoorway(true);
+						switch (lineValues[i].charAt(1)) {
+						case 'U':
+							bc.setDoorDirection(DoorDirection.UP);
+							break;
+						case 'R':
+							bc.setDoorDirection(DoorDirection.RIGHT);
+							break;
+						case 'D':
+							bc.setDoorDirection(DoorDirection.DOWN);
+							break;
+						case 'L':
+							bc.setDoorDirection(DoorDirection.LEFT);
+							break;
+						case 'N':
+							bc.setDoorDirection(DoorDirection.NONE);
+							break;
+							//if door notation is not like above then print error message
+						default:
+							throw new BadConfigFormatException("Door Notation is Wrong.  Character " + lineValues[i].charAt(1) + " is not a valid door direction");
+						}
+					}
+
+					board[row][i] = bc;
+				}
+
+				row++;
+			}
+			sc.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+
+		//Legend config:
+		try {
+			FileReader legendFile = new FileReader(roomConfigFile);
+
+			Scanner sc = new Scanner(legendFile);
+
+			while(sc.hasNextLine())	{
+				String line = sc.nextLine();
+				String[] lineValues = line.split(", ");
+
+				if(lineValues.length != 3) {
+					throw new BadConfigFormatException("Error: a row in " + roomConfigFile + " does not have 3 columns");
+				}
+
+				this.legend.put(Character.valueOf(lineValues[0].charAt(0)), lineValues[1]);
+
+
+				
+
+				if(lineValues[2].equals("Card")) {
+					
+					
+					Card cardToAdd = new Card(lineValues[1]);
+					cardToAdd.setCardType(CardType.ROOM);
+					
+					roomMap.put(lineValues[0].charAt(0), lineValues[1]);
+					
+					
+					allCards.add(cardToAdd);
+					
+					cardDeck.add(cardToAdd);
+			
+
+				}
+			}
+			sc.close();
+
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+
+		calcAdjacencies();
+		
+		//Configure Players
+		try	{
+			loadPlayerConfig();
+		}	catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		//Configure Weapons
+		try	{
+			loadWeaponConfig();
+		}	catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void initializePanel(JFrame frame)	{
+		
+		this.setSize(frame.getWidth()*4/5, frame.getHeight()*4/5 -100);
+		
+		this.setBackground(Color.white);
+		
+		int cellscreated = 0;
+		for(int i=0; i<this.numRows; i++)	{
+			for(int j=0; j<this.numColumns; j++) {
+				board[i][j].calculatePixelLocation(this.getWidth(), this.getHeight());
+				cellscreated++;
+				
+			}
+		}
+		
+		System.out.println(cellscreated);
+
+		frame.add(this);
+		
+		
+		
+	}
+	
+	public void dealCards() {
+			
+		//players = new HashSet<Player>();
+		Random random = new Random();
+		
+		//pick 3 random cards of unique type for this game's solution
+		ArrayList<Card> tempList = new ArrayList<Card>(cardDeck);
+		int index = Math.abs(random.nextInt())%cardDeck.size();
+		Card solnCard = tempList.get(index);
+		while(solnCard.getCardType()!=CardType.PERSON) {
+			index = Math.abs(random.nextInt())%cardDeck.size();
+			solnCard = tempList.get(index);
+		}
+		cardSolution.add(solnCard);
+		cardDeck.remove(solnCard);
+		tempList.remove(index);
+		while(solnCard.getCardType()!=CardType.ROOM) {
+			index = Math.abs(random.nextInt())%cardDeck.size();
+			solnCard = tempList.get(index);
+		}
+		cardSolution.add(solnCard);
+		cardDeck.remove(solnCard);
+		tempList.remove(index);
+		while(solnCard.getCardType()!=CardType.WEAPON) {
+			index = Math.abs(random.nextInt())%cardDeck.size();
+			solnCard = tempList.get(index);
+		}
+		cardSolution.add(solnCard);
+		cardDeck.remove(solnCard);
+		tempList.remove(index);
+		
+		
+		//initialize the solution instance for this game
+		for(Card sCard : cardSolution) {
+			if(sCard.getCardType()==CardType.PERSON) {
+				this.solution.person = sCard.getCardName();
+			}
+			if(sCard.getCardType()==CardType.ROOM) {
+				this.solution.room = sCard.getCardName();
+			}
+			if(sCard.getCardType()==CardType.WEAPON) {
+				this.solution.weapon = sCard.getCardName();
+			}
+		}
+		
+		
+		for(Player player : players) {
+			Set<Card> cardHand = new HashSet<Card>();
+			for(int i=0; i<CARDS_PER_PLAYER; i++) {
+				index = Math.abs(random.nextInt())%tempList.size();
+				cardHand.add(tempList.get(index));
+				cardDeck.remove(tempList.get(index));
+				tempList.remove(index);
+			}
+			player.setCardHand(cardHand);
+		}
+	}
+	
+	//This function may not work:
+	public void toggleHumanPlayer(String playerName)	{
+		Player targetPlayer;
+		for (Player player : players)	{
+			if(player.getPlayerName() == playerName)	{
+				HumanPlayer playerToAdd = new HumanPlayer(player.getPlayerName(), player.getColor(), player.getRow(), player.getColumn());
+				playerToAdd.setCardHand(player.getCardHand());
+				players.remove(player);
+				players.add(playerToAdd);
+				return;
+			}
+		}
+		
+		
+		return;
+			
+	}
+	
+	
+	public void loadPlayerConfig() throws FileNotFoundException, BadConfigFormatException	{
+		FileReader playerFile = new FileReader(playerConfigFile);
+
+		Scanner sc = new Scanner(playerFile);
+
+		while(sc.hasNextLine())	{
+			
+			String entries = sc.nextLine();
+			String[] lineValues = entries.split(", ");
+			
+			
+			Card cardToAdd = new Card(lineValues[0]);
+			Color c = Color.black;
+			try	{
+			c = (Color)Color.class.getField(lineValues[1].toUpperCase()).get(null);
+			} catch (Exception e) {
+				throw new BadConfigFormatException("One of the color names is not valid!");
+				
+			}
+			Player playerToAdd = new ComputerPlayer(lineValues[0],  c, Integer.parseInt(lineValues[2]), Integer.parseInt(lineValues[3]));
+			
+			players.add(playerToAdd);
+			
+			
+			cardToAdd.setCardType(CardType.PERSON);
+			allCards.add(cardToAdd);
+			cardDeck.add(cardToAdd);
+		}
+		
+		sc.close();
+	}
+	
+	public void loadWeaponConfig() throws FileNotFoundException, BadConfigFormatException	{
+		FileReader weaponFile = new FileReader(weaponConfigFile);
+
+		Scanner sc = new Scanner(weaponFile);
+
+		while(sc.hasNextLine())	{
+			String entry = sc.nextLine();
+			Card cardToAdd = new Card(entry);
+			cardToAdd.setCardType(CardType.WEAPON);
+			allCards.add(cardToAdd);
+			cardDeck.add(cardToAdd);
+		}
+		
+		sc.close();
+	}
+ 
+	public void configNumSetup() throws FileNotFoundException, BadConfigFormatException {
+		numColumns = 0;
+		numRows = 0;
+
+		FileReader layoutFile = new FileReader(boardConfigFile);
+		Scanner sc2 = new Scanner(layoutFile);
+		while(sc2.hasNextLine())	{
+			String line = sc2.nextLine();
+			String[] lineValues = line.split(",");
+			if(numRows!=0)
+			{
+				if(!(numColumns == lineValues.length))	{
+					throw new BadConfigFormatException("Number of columns not consistent");
+				}
+			}
+			numColumns = lineValues.length;
+			numRows++;
+		}
+		sc2.close();
+	}
+
+	public void loadRoomConfig() throws FileNotFoundException, BadConfigFormatException	{
+		configNumSetup();
+
+		throw new BadConfigFormatException();		
+	}
+
+	public void loadBoardConfig() throws FileNotFoundException, BadConfigFormatException	{
+		configNumSetup();
+
+		BoardCell[][] _board = new BoardCell[numRows][numColumns];
+		FileReader layoutFile = new FileReader(boardConfigFile);
+		Scanner sc = new Scanner(layoutFile);
+		String line;
+		int row=0;
+		while(sc.hasNextLine())	{
+			line = sc.nextLine();
+			String[] lineValues = line.split(",");
+			for(int i=0; i<lineValues.length; i++)	{
+				BoardCell bc = new BoardCell(row, i);
+				bc.setInitial(lineValues[i].charAt(0));
+				if(lineValues[i].length() > 1)	{
+					bc.setDoorway(true);
+					switch (lineValues[i].charAt(1)) {
+					case 'U':
+						bc.setDoorDirection(DoorDirection.UP);
+						break;
+					case 'R':
+						bc.setDoorDirection(DoorDirection.RIGHT);
+						break;
+					case 'D':
+						bc.setDoorDirection(DoorDirection.DOWN);
+						break;
+					case 'L':
+						bc.setDoorDirection(DoorDirection.LEFT);
+						break;
+						//Error message if door notation is not covered above
+					default:
+						throw new BadConfigFormatException("Door Notation is Wrong");
+
+					}
+				}
+
+				_board[row][i] = bc;
+				System.out.println(_board[row][i].toString());
+			}
+			row++;
+		}
+		sc.close();
+	}
+
+	private boolean ableToEnter(BoardCell walkway, BoardCell door) {
+		String requiredDirection = "NONE";
+
+		//if this ww cell is above door:
+		if((walkway.getRow() - door.getRow()) == -1)	{
+			requiredDirection = "UP";
+		}
+		//if this ww cell is below door:
+		if((walkway.getRow() - door.getRow()) == 1)	{
+			requiredDirection = "DOWN";
+		}
+		//if this ww cell is to right of door:
+		if((walkway.getColumn() - door.getColumn()) == 1)	{
+			requiredDirection = "RIGHT";
+		}
+		//if this ww cell is to the left of door:
+		if((walkway.getColumn() - door.getColumn()) == -1)	{
+			requiredDirection = "LEFT";
+		}
+
+		if(requiredDirection == (door.getDoorDirection().toString())) {
+			return true;
+		}
+		return false;
+	}
+
+	public void calcAdjacencies() {
+		//adjMtx = new HashMap<BoardCell, Set<BoardCell>>();
+
+		for(int i=0; i<board.length; i++) {
+			for(int j=0; j<board[i].length; j++) {
+
+				Set<BoardCell> adjCells = new HashSet<BoardCell>();
+
+				if(board[i][j].getInitial()!='W' && !board[i][j].isDoorway())	{
+
+				} else	{
+
+					if(board[i][j].isDoorway())	{
+						try	{
+							if(ableToEnter(board[i][j-1], board[i][j] ))	{
+								adjCells.add(board[i][j-1]);	
+							}	} catch (Exception e) {}
+						try	{
+							if(ableToEnter(board[i+1][j], board[i][j]))	{
+								adjCells.add(board[i+1][j]);	
+							}} catch (Exception e) {}
+						try	{
+							if(ableToEnter( board[i][j+1], board[i][j]))	{
+								adjCells.add(board[i][j+1]);	
+							}} catch (Exception e) {}
+						try	{
+							if(ableToEnter(board[i-1][j], board[i][j]))	{
+								adjCells.add(board[i-1][j]);	
+							}} catch (Exception e) {}
+					} else	{
+
+						//try to get up direction:
+						try	{
+							if(board[i][j-1].getInitial()=='W' || (board[i][j-1].isDoorway() && ableToEnter(board[i][j], board[i][j-1])))	{
+								adjCells.add(board[i][j-1]);	
+							}
+
+						} catch (Exception e)	{}
+
+						//try to get right direction
+						try	{
+							if(board[i+1][j].getInitial()=='W' || (board[i+1][j].isDoorway() && ableToEnter(board[i][j], board[i+1][j])))	{
+								adjCells.add(board[i+1][j]);
+							}
+						} catch (Exception e)	{}
+
+						//try to get down direction
+						try	{
+							if(board[i][j+1].getInitial()=='W' || (board[i][j+1].isDoorway() && ableToEnter(board[i][j], board[i][j+1])))	{
+								adjCells.add(board[i][j+1]);
+							}
+						} catch (Exception e)	{}
+
+						//try to get left direction
+						try	{
+							if(board[i-1][j].getInitial()=='W' || (board[i-1][j].isDoorway() && ableToEnter(board[i][j], board[i-1][j])))	{
+								adjCells.add(board[i-1][j]); 
+							}
+						} catch (Exception e)	{}
+					}
+
+				}
+
+
+				adjMatrix.put(board[i][j], adjCells);
+
+
+			}
+		}
+
+	}
+
+	public void setConfigFiles(String layout, String legend, String players, String weapons) {
+		this.boardConfigFile = layout;
+		this.roomConfigFile = legend;
+		this.playerConfigFile = players;
+		this.weaponConfigFile = weapons;
+		
+	}
+
+	public Map<Character, String> getLegend( )	{
+		return legend;
+	}
+
+	public int getNumRows()	{
+		return numRows;
+	}
+
+	public int getNumColumns()	{
+		return numColumns;
+	}
+
+	public BoardCell getCellAt(int i, int j) {
+		return board[i][j];
+	}
+
+	public Set<BoardCell> getAdjList(int i, int j) {
+		return adjMatrix.get(board[i][j]);
+	}
+	
+	public Player getPlayer(String name) {
+		for(Player player : players)	{
+			System.out.println(player.getPlayerName());
+			if(name.equals(player.getPlayerName()))	{
+				return player;
+			}
+				
+		}
+		return null;
+	}
+
+	public Card getCard(String name) {
+		for(Card card : allCards) {
+			if(name.equals(card.getCardName()))	{
+				return card;
+			}
+		}
+		return null;
+	}
+	
+	public void calcTargetsRecursive(int i, int j, int k) {
+		BoardCell startCell = board[i][j];
+		if(k<=0) {
+			return;
+		}
+		for (BoardCell adjCell : adjMatrix.get(board[i][j]))	{
+			visited.add(startCell);
+			if(adjCell.isDoorway() && !visited.contains(adjCell)) {
+				//System.out.println(adjCell + " was added as a doorway shortcut from previous cell " + startCell);
+				targets.add(adjCell);
+			}
+			if(!visited.contains(adjCell))	{
+				visited.add(adjCell);
+				//Base Case, pathLength == 1:
+				if(k==1)	{
+					targets.add(adjCell);
+				} else	{
+					calcTargetsRecursive(adjCell.getRow(), adjCell.getColumn(), k-1);
+				}				
+				visited.remove(adjCell);
+			}
+		}
+		return;
+	}
+
+
+	public void calcTargets(int i, int j, int k) {
+		//proxy method that calls calcTargetsRecursive
+		targets.clear();
+		visited.clear();
+		calcTargetsRecursive(i,j,k);
+	}
+
+	public Set<BoardCell> getTargets() {
+		return targets;
+	}
+
+	public void loadConfigFiles() {
+
+	}
+
+	public void selectAnswer() {
+
+	}
+
+	public Card handleSuggestion(/*TBD*/ Solution suggestion, Player caller, Set<Player> targetPlayers) {
+		
+		
+		for(Player player : targetPlayers)	{
+			if(caller.equals(player))	{
+				continue;
+			}
+			
+			Card disprovedCard;
+			
+			disprovedCard = player.disproveSuggestion(suggestion);
+			
+			if(disprovedCard!=null) {
+				return disprovedCard;
+			}
+			
+		}
+		
+		
+		return null;
+		
+	}
+
+	public boolean checkAccusation(Solution accusation) {
+		
+		for(Card c : this.getSolutionDeck()) {
+			if(c.getCardType()==CardType.PERSON) {
+				if(!(accusation.person==c.getCardName()))	{
+					return false;
+				}
+				
+			}
+			if(c.getCardType()==CardType.ROOM) {
+				if(!(accusation.room==c.getCardName()))	{
+					return false;
+				}
+			}
+			if(c.getCardType()==CardType.WEAPON) {
+				if(!(accusation.weapon==c.getCardName()))	{
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public Set<Player> getPlayers()	{
+		return this.players;
+	}
+	
+	public Set<Card> getCardDeck()	{
+		return this.cardDeck;
+	}
+	
+	public Set<Card> getAllCards()	{
+		return this.allCards;
+	}
+	public Set<Card> getSolutionDeck()	{
+		return this.cardSolution;
+	}
+	
+	public static void infoBox(String infoMessage, String titleBar)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+    }
+}

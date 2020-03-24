@@ -1,0 +1,17 @@
+Authors: Baoviet(Jean) Duong and Kenny Lieu
+-There are five pieces that interact (extend GamePiece): Knight, Bishop, Queen, King, and Rook.
+	-There is at least one for each InteractionResult: KILL (Knight), GET_POINT (Bishop), ADVANCE (King), HIT (Rook), NONE (all of them)
+	-Bishop can interact at a distance.
+	-Rook, King, and Knight interact only when on the same square as the player.
+-Bishop and Queen implement Moveable.
+	-Bishop moves based on distance between player and Queen moves randomly.
+	-Queen's movement is made by random decision.
+-Pawn is only Drawable.
+-There are exactly 2 levels.
+
+Bishop(extends GamePiece implements Drawable, Moveable): moves a step towards player every time and can be challenged for a prize if within two squares and is defeated by player if within one square.
+King(extends GamePiece implements Drawable): player just advances when on the same square as king
+Knight(extends GamePiece): kills player when on same square
+Pawn(implements Drawable): simply exists and does not interact with player
+Queen(extends GamePiece implements Moveable, Drawable): protects the king, hits player if within one square, moves randomly
+Rook(extends GamePiece implements Drawable): hits when on same square as player

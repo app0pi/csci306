@@ -1,0 +1,14 @@
+package GUI;
+
+import javax.swing.JPanel;
+
+public class PlayerHandPanel extends JPanel{
+	private static PlayerHandPanel thisPlayerHandPanel;
+	private PlayerHandPanel()	{}
+	
+	public static PlayerHandPanel getInstance()	{
+		if (thisPlayerHandPanel == null)
+			thisPlayerHandPanel=new PlayerHandPanel();
+		return thisPlayerHandPanel;
+	}
+}

@@ -1,0 +1,274 @@
+commit afa3e73888a4ac15ece6bb210921a23853aa304b
+Author: JaredHam777 <jaredghamilton1998@gmail.com>
+Date:   Wed Nov 6 13:21:24 2019 -0700
+
+    control panel structure
+
+commit b8e5bd8a6ca8c7dbd23a1be3b56cfa57aa63bfb5
+Author: JaredHam777 <jaredghamilton1998@gmail.com>
+Date:   Wed Nov 6 12:39:43 2019 -0700
+
+    tests weren't working, had to fix
+
+commit 631e6874d031c76d7f4efc41dd962fe78d52d6d1
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Tue Nov 5 12:14:31 2019 -0700
+
+    gui panel started
+
+commit bef16bd6e714deffc96fd7bfd0e34a79c6fa6bbb
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 21:51:51 2019 -0700
+
+    all gameAction tests passed!
+
+commit 7047f8ec1cfb371b730fee8e17599f8fd4154fdc
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 21:02:07 2019 -0700
+
+    failing test for create suggestion
+
+commit d5116ab8f074088f074614912d46a2783f3f8443
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 19:11:44 2019 -0700
+
+    passing tests for suggestion
+
+commit 5aba01684af4e55e6093c7ab6dd34852e9e0045b
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 18:50:34 2019 -0700
+
+    failing test for disprove suggestion
+
+commit 176c7643f6fad9651d3e1d1fd120a2f157d5c846
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 18:32:49 2019 -0700
+
+    passing tests for last commit
+
+commit f606e525359f96cbb9bfc2d6dcb57856bf4f33d2
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 18:23:01 2019 -0700
+
+    failing test for accusation
+
+commit 946d1028728210ae1f7310507b32289ad9ff49fc
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 18:10:15 2019 -0700
+
+    passing tests for last commit
+
+commit c93fe36d9a52b28f97bd9ce43ef9b4c125a12e5d
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 17:59:41 2019 -0700
+
+    failing test created for when room is the last visited
+
+commit 8b7ff9a25e0cd332a6e88baf1c59d4f5ec9cb0b5
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 17:46:54 2019 -0700
+
+    failing test for testing target selection when there is one room that isn't last visited
+
+commit 93f531f2bae988c9474707972fac63667f04d29d
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Mon Nov 4 17:32:53 2019 -0700
+
+    passing test for testTargetRandomSelection
+
+commit 32176cccd9140c032643c705be005f27e58bbb3b
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 31 12:12:32 2019 -0600
+
+    failing testTargetRandomSelection method created
+
+commit 5651c3231324055ec0bd14d404a9f55baecd0297
+Author: JaredHam777 <jaredghamilton1998@gmail.com>
+Date:   Thu Oct 31 07:59:42 2019 -0600
+
+    log
+
+commit fd163ef96233ab42589e0a502b77d307fc11637c
+Author: JaredHam777 <jaredghamilton1998@gmail.com>
+Date:   Thu Oct 31 07:56:32 2019 -0600
+
+    all gameSetup tests passed
+
+commit 222ad753313aaf040dcf4552ddc3bcdea3f7898a
+Author: JaredHam777 <jaredghamilton1998@gmail.com>
+Date:   Thu Oct 31 07:11:20 2019 -0600
+
+    2/3 tests pass
+
+commit 3a07841806bba50710ff3029c493e32f7996934a
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Tue Oct 29 12:18:09 2019 -0600
+
+    failing tests
+
+commit f76dec442e8d908ddaed94ccebfbb108a3fd4951
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 12:08:32 2019 -0600
+
+    added variables to Solution
+
+commit e38cda9def53a394c54d91735b5b8a2c8404c159
+Merge: cc0b7d2 f1f0e81
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 12:00:44 2019 -0600
+
+    Merge branch 'master' of https://github.com/JaredHam777/Clue
+
+commit cc0b7d25f11dd92f07869b3a883799009cc5bd34
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 12:00:33 2019 -0600
+
+    commit before merge
+
+commit f1f0e81250348397462d708dd66099e5f4794d31
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:55:28 2019 -0600
+
+    method
+
+commit 2752bc375fec5a7eb627bacdf17ef358675ddf0c
+Merge: f1e1b0f faa2bf5
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:55:06 2019 -0600
+
+    Merge branch 'master' of https://github.com/JaredHam777/Clue
+
+commit f1e1b0fa732028f78b9bce9a9982020fbdc4b0b2
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:54:55 2019 -0600
+
+    associated Card with CardType
+
+commit faa2bf5199b14ba5866c89e83c7e746d6991b168
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:54:19 2019 -0600
+
+    methods
+
+commit da80a3789350e8f267349a28bfcce4e468c8bc48
+Merge: bc76ac6 a6e2c39
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:52:19 2019 -0600
+
+    Merge branch 'master' of https://github.com/JaredHam777/Clue
+
+commit a6e2c390e5cb58e929f7aedbb705fc96d510473b
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:51:58 2019 -0600
+
+    constructors
+
+commit bc76ac6c0e610be612ccdc1efcc41d913c56ccf4
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:51:28 2019 -0600
+
+    updated Board and Card methods, created CardType enum
+
+commit 02079f461e44d741256db926d667dc660bd9fcbc
+Merge: bab1096 f848b93
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:43:28 2019 -0600
+
+    Merge branch 'master' of https://github.com/JaredHam777/Clue
+
+commit bab1096aee6cb02b61a7de2a0f043595032c89fa
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:43:20 2019 -0600
+
+    added Card class, added some methods to Board
+
+commit f848b93331e975156063241c2802f6ac19389748
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:42:57 2019 -0600
+
+    player and solution classes
+
+commit befca65eaf5d9ea12a68ce926d7f26fc6c4e4b96
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:32:09 2019 -0600
+
+    DoorDirection removed unused stuff
+
+commit d2a109c26f23dce68a3381ac7e94ab5bc61e4d89
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:28:58 2019 -0600
+
+    completely changed redundant doorway boolean initialization
+
+commit 7df4baf76602abea9065ace13925b70073d21b21
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:24:25 2019 -0600
+
+    closed one of the scanners in a try catch loop in initialize
+
+commit be02a93ef0181de8577bb76b6ca3cbd9ae8142a8
+Merge: 2f3e419 9fe7c4e
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:23:39 2019 -0600
+
+    Merge branch 'master' of https://github.com/JaredHam777/Clue
+
+commit 9fe7c4e7c82ba9d236b30b94a3e0fcd758aa277c
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:23:23 2019 -0600
+
+    reorganized added data file
+
+commit 2f3e419ff93b3ed6ac4a62e533c8eefadb7347fb
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:20:52 2019 -0600
+
+    added comments to ableToEnter method for other directions
+
+commit b41f05758bfc7a6455e967b842420ed36d7a88ff
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:14:29 2019 -0600
+
+    refactored in BadConfigFormatException
+
+commit 012461df5682bc9490a3e652581421a1d5f271a9
+Author: Kenny Lieu <kennylieu@mines.edu>
+Date:   Thu Oct 24 11:12:57 2019 -0600
+
+    removed unnecessary comments in BoardCell
+
+commit 86d6609cdb4745fe90ec447aa3a30116b6f4f3cc
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:11:26 2019 -0600
+
+    refactored initialize function
+
+commit 2835f214506c9e4c255ac31bb5976cd87b677e1d
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 24 11:01:34 2019 -0600
+
+    scanner close, cleaned var
+
+commit 72fb7dc9de937b27736ab2793eb5833a22e9c91f
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Wed Oct 23 17:02:00 2019 -0600
+
+    coding standards
+
+commit 983c0bf63733bb65debe88c062d6c0bb414eea2b
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Wed Oct 23 16:48:22 2019 -0600
+
+    tests passed
+
+commit 171ec35303f777cdf4d95c52a1a5782ef745c7f6
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Wed Oct 23 14:07:21 2019 -0600
+
+    test cases
+
+commit 041f4d2df868b06934bce92280ff04c47ca899a7
+Author: Jared Hamilton <jghamilton@mines.edu>
+Date:   Thu Oct 17 12:15:57 2019 -0600
+
+    adjTests

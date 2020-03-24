@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;FileIO/badscores.txt&apos; to &apos;badscore.txt&apos;" description="Rename resource &apos;badscores.txt&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="badscores.txt" name="badscore.txt" stamp="1569698149849" updateReferences="true"/>
+</session>
